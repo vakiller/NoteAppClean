@@ -8,7 +8,7 @@
 import Foundation
 import RxSwift
 
-public protocol ListNoteUseCasesProtocol {
+public protocol ListNoteUseCaseProtocol {
     func getListNotes(requestModel: GetListNotesRequest) -> Observable<[NoteModel]>
     func deleteListNotes(request: GetNoteRequest) -> Observable<Bool>
 }

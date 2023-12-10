@@ -11,10 +11,10 @@ public struct NoteModel {
     public let id: String?
     public let lastUpdate: Date?
     public let content: String?
-    public let checkList: [CheckItem]?
+    public let checkList: [CheckListItem]?
 }
 
-public struct CheckItem {
+public struct CheckListItem {
     public let id: String?
     public let title: String?
     public let isCheck: Bool?

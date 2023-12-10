@@ -11,6 +11,7 @@ import RxSwift
 public protocol NoteRepositoryProtocol {
     func getListNotes(requestListNote: GetListNotesRequest) -> Observable<[NoteModel]>
     func getDetailNote(requestNote: GetNoteRequest) -> Observable<NoteModel>
-    func deleteNote(requestNote: GetNoteRequest) -> Observable<Bool>
-    func editNote(requestNote: GetNoteRequest, note: NoteModel) -> Observable<Bool>
+    func deleteNote(requestNote: GetNoteRequest) -> Completable
+    func editNote(requestNote: GetNoteRequest, note: NoteModel) -> Completable
+    func createNote(noteModel: NoteModel) -> Completable
 }
