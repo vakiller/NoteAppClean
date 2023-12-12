@@ -10,5 +10,5 @@ import RxSwift
 
 public protocol ListNoteUseCaseProtocol {
     func getListNotes(requestModel: GetListNotesRequest) -> Observable<[NoteModel]>
-    func deleteListNotes(request: GetNoteRequest) -> Observable<Bool>
+    func deleteListNotes(request: GetNoteRequest) -> Completable
 }
