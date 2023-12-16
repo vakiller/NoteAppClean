@@ -7,21 +7,21 @@
 
 import Foundation
 import UIKit
-
-final class ListNotesCoordinator: BaseCoordinator {
-    
-    let rootViewController: UINavigationController
-    
-    init(rootViewController: UINavigationController) {
-        self.rootViewController = rootViewController
-    }
-    
-    override func start() {
-        let listNotesViewModel = ListNotesViewModel(listNoteUseCase: DiResolver.shared.resolve(ListNoteUseCaseProtocol.self))
-        let listNotesVC = ListNotesViewController(viewModel: listNotesViewModel)
-        listNotesVC.view.backgroundColor = .blue
-        self.rootViewController.setViewControllers([listNotesVC], animated: false)
-        
-    }
-    
-}
+//
+//final class ListNotesCoordinator: BaseCoordinator {
+//    
+//    weak var rootViewController: UINavigationController?
+//    
+//    init(rootViewController: UINavigationController) {
+//        self.rootViewController = rootViewController
+//    }
+//    
+//    override func start() {
+//        let listNotesViewModel = ListNotesViewModel(listNoteUseCase: DiResolver.shared.resolve(ListNoteUseCaseProtocol.self))
+//        let listNotesVC = ListNotesViewController(viewModel: listNotesViewModel)
+//        listNotesVC.view.backgroundColor = .blue
+//        self.rootViewController?.setViewControllers([listNotesVC], animated: false)
+//        
+//    }
+//    
+//}

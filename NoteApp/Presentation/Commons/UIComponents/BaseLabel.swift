@@ -15,7 +15,7 @@ class BaseLabel: UILabel {
         case .largeTitleText:
             self.font = .boldSystemFont(ofSize: 24)
         case .titleText:
-            self.font = .boldSystemFont(ofSize: 20)
+            self.font = .boldSystemFont(ofSize: 16)
         case .body:
             self.font = .systemFont(ofSize: 16)
         case .caption:

@@ -6,9 +6,9 @@
 //
 
 import Foundation
+import UIKit
 
-
-public class BaseCoordinator {
+public class BaseCoordinator: NSObject {
     private var childCoordinators: [BaseCoordinator] = []
     
     public func start() {
@@ -31,10 +31,17 @@ public class BaseCoordinator {
         }
     }
     
+    public func checkViewControllerDeinit(viewController: UIViewController) {
+        
+    }
+    
 }
 
-extension BaseCoordinator: Equatable {
-    public static func == (lhs: BaseCoordinator, rhs: BaseCoordinator) -> Bool {
-        return lhs === rhs
+extension BaseCoordinator: UINavigationControllerDelegate {
+    public func navigationController(_ navigationController: UINavigationController, didShow viewController: UIViewController, animated: Bool) {
+        guard let viewController = navigationController.transitionCoordinator?.viewController(forKey: .from), !navigationController.viewControllers.contains(viewController) else {
+                    return
+                }
+        self.checkViewControllerDeinit(viewController: viewController)
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 
 class NoteRepository: NoteRepositoryProtocol {
-    
+
     private let noteDataSource: NoteDataSourceProtocol
     
     init(noteDataSource: NoteDataSourceProtocol) {
@@ -33,6 +33,10 @@ class NoteRepository: NoteRepositoryProtocol {
     }
     
     func createNote(noteModel: NoteModel) -> Completable {
+        return self.noteDataSource.createNote(noteModel: noteModel)
+    }
+    
+    func createNoteReturnValue(noteModel: NoteModel) -> Observable<NoteModel> {
         return self.noteDataSource.createNote(noteModel: noteModel)
     }
 }

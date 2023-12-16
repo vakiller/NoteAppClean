@@ -14,7 +14,7 @@ func buildContainer() -> Container {
     // coredata
     
     container.register(CoreDataHelperProtocol.self) { _ in
-        return CoreDataHelper()
+        return CoreDataHelper.shared
     }
     
     container.register(NoteDataSourceProtocol.self) { _ in
@@ -35,6 +35,10 @@ func buildContainer() -> Container {
     
     container.register(ListNoteUseCaseProtocol.self) { _ in
         return ListNoteUseCase(noteRepository: container.resolve(NoteRepositoryProtocol.self)!)
+    }
+    
+    container.register(DetailNoteUseCaseProtocol.self) { _ in
+        return DetailNoteUseCase(noteRepository: container.resolve(NoteRepositoryProtocol.self)!)
     }
     
     return container

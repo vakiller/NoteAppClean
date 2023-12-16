@@ -9,7 +9,9 @@ import Foundation
 
 public struct NoteModel {
     public let id: String?
+    public let createAt: Date?
     public let lastUpdate: Date?
+    public let title: String?
     public let content: String?
     public let checkList: [CheckListItem]?
 }

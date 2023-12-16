@@ -12,6 +12,8 @@ public class CoreDataHelper: CoreDataHelperProtocol {
     
     // MARK: - Core Data stack
 
+    static let shared: CoreDataHelper = CoreDataHelper()
+    
     lazy var persistentContainer: NSPersistentContainer = {
         /*
          The persistent container for the application. This implementation
@@ -53,6 +55,8 @@ public class CoreDataHelper: CoreDataHelperProtocol {
     
     public func getListData(entityName: String) throws -> [NSManagedObject] {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entityName)
+        let sort = NSSortDescriptor(key: "createAt", ascending: false)
+        fetchRequest.sortDescriptors = [sort]
         let entities = try persistentContainer.viewContext.fetch(fetchRequest)
         return entities
     }

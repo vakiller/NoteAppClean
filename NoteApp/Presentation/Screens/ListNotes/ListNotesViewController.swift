@@ -9,12 +9,17 @@ import Foundation
 import UIKit
 import RxSwift
 import RxRelay
+import RxSwiftExt
+import RxCocoa
 import SnapKit
 
-class ListNotesViewController: UIViewController {
+class ListNotesViewController: UIViewController, ListNotesViewModelInput {
     var viewModel: ListNotesViewModel
-    let loadListNotes: PublishSubject<Void> = PublishSubject<Void>()
-    let searchListNotes: BehaviorRelay<String?> = BehaviorRelay<String?>(value: nil)
+    var loadListNotes: PublishSubject<Void> = PublishSubject<Void>()
+    var searchListNotes: BehaviorRelay<String?> = BehaviorRelay<String?>(value: nil)
+    
+    let listNotesData: BehaviorRelay<[NoteModel]?> = BehaviorRelay<[NoteModel]?>(value: [])
+    let goToNoteDetail: PublishSubject<NoteModel?> = PublishSubject<NoteModel?>()
     
     // UI Properties
     
@@ -46,9 +51,24 @@ class ListNotesViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.separatorColor = .gray
         tableView.keyboardDismissMode = .onDrag
+        tableView.register(NoteTableViewCell.self, forCellReuseIdentifier: NoteTableViewCell.reuseIdentifier)
+        tableView.delegate = self
+        tableView.separatorStyle = .none
+        tableView.dataSource = self
         return tableView
+    }()
+    
+    private lazy var addNoteButton: UIButton = {
+        let button = UIButton()
+        var configuration = UIButton.Configuration.filled()
+        configuration.contentInsets = .init(top: 10, leading: 20, bottom: 10, trailing: 20)
+        configuration.image = UIImage(systemName: "pencil.line")
+        configuration.baseBackgroundColor = .systemBlue
+        configuration.background.cornerRadius = 32
+        configuration.cornerStyle = .fixed
+        button.configuration = configuration
+        return button
     }()
     
     override func viewDidLoad() {
@@ -75,7 +95,6 @@ class ListNotesViewController: UIViewController {
     private func setupUi() {
         
         self.view.addSubview(headerView)
-        headerView.backgroundColor = .red
         headerView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
             make.leading.trailing.equalToSuperview()
@@ -95,6 +114,26 @@ class ListNotesViewController: UIViewController {
             make.trailing.equalToSuperview()
             make.top.equalTo(self.headerView.snp.bottom)
         }
+        
+        self.view.addSubview(tableView)
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(self.searchBar.snp.bottom).offset(8)
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
+        addNoteButton.tintColor = .white
+        addNoteButton.backgroundColor = .systemBlue
+        addNoteButton.layer.cornerRadius = 32
+        
+        self.view.addSubview(addNoteButton)
+        addNoteButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().offset(-16)
+            make.bottom.equalToSuperview().offset(-32)
+            make.height.width.equalTo(64)
+        }
+        
     }
     
     required init?(coder: NSCoder) {
@@ -106,12 +145,22 @@ class ListNotesViewController: UIViewController {
 extension ListNotesViewController: Bindable {
     
     func bindViewModel() {
-        let output = self.viewModel.transform(input: ListNotesViewModel.Input(loadListNotes: loadListNotes, searchListNotes: searchListNotes))
-        output.listNotes
-            .withUnretained(self)
-            .subscribe(onNext: { owner, listNotes in
-                print("Data \(listNotes)")
+        
+        self.addNoteButton.rx.tap.asDriver().drive(onNext: { [weak self] _ in
+            self?.goToNoteDetail.onNext(nil)
+        })
+        .disposed(by: self.viewModel.disposeBag)
+        
+        self.viewModel.input.loadListNotes.onNext(())
+        
+        self.searchBar.rx.text.bind(to: self.viewModel.searchListNotes)
+            .disposed(by: self.viewModel.disposeBag)
+        
+        self.viewModel.output.listNotes
+            .do(afterNext: { _ in
+                self.tableView.reloadData()
             })
+            .bind(to: listNotesData)
             .disposed(by: self.viewModel.disposeBag)
     }
     
@@ -121,4 +170,35 @@ extension ListNotesViewController: UISearchBarDelegate{
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
 //        self.searchText.send(searchText)
     }
+}
+
+extension ListNotesViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return listNotesData.value?.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 80
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false)
+        
+        print("SELECTED INDEX \(indexPath.row)")
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let noteDataInCell = listNotesData.value?[indexPath.row]
+        if let cell = tableView.dequeueReusableCell(withIdentifier: NoteTableViewCell.reuseIdentifier, for: indexPath) as? NoteTableViewCell {
+            cell.setData(noteModel: noteDataInCell)
+            return cell
+        }
+        return UITableViewCell()
+    }
+    
 }

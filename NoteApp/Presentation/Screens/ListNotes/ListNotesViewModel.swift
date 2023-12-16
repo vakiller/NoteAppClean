@@ -10,44 +10,71 @@ import RxSwift
 import RxRelay
 import RxSwiftExt
 
+protocol ListNotesViewModelInput {
+    var loadListNotes: PublishSubject<Void> { get set }
+    var searchListNotes: BehaviorRelay<String?> { get set }
+}
+
 class ListNotesViewModel: ViewModelType {
+    
+    var input: Input
+    var output: Output
+    
     
     var disposeBag: DisposeBag
     var listNoteUseCase: ListNoteUseCaseProtocol?
     
-    struct Input {
-        let loadListNotes: PublishSubject<Void>
-        let searchListNotes: BehaviorRelay<String?>
+    struct Input: ListNotesViewModelInput {
+        var loadListNotes: PublishSubject<Void>
+        var searchListNotes: BehaviorRelay<String?>
     }
     
     struct Output {
         var listNotes: RxRelay.BehaviorRelay<[NoteModel]?>
     }
     
+    var loadListNotes: PublishSubject<Void> = PublishSubject<Void>()
+    var searchListNotes: BehaviorRelay<String?> = BehaviorRelay<String?>(value: nil)
+    
+    var listNotes: RxRelay.BehaviorRelay<[NoteModel]?> = BehaviorRelay<[NoteModel]?>(value: [])
+    
     init(listNoteUseCase: ListNoteUseCaseProtocol) {
         self.listNoteUseCase = listNoteUseCase
         self.disposeBag = DisposeBag()
+        
+        self.input = Input(loadListNotes: loadListNotes, searchListNotes: searchListNotes)
+        self.output = Output(listNotes: listNotes)
+        
+        self.getListNotes()
     }
     
-    func transform(input: Input) -> Output {
+    func getListNotes() {
         
-        let listNotes: BehaviorRelay<[NoteModel]?> = BehaviorRelay<[NoteModel]?>(value: [])
-        let output = Output(listNotes: listNotes)
-        
+        guard let listNoteUseCase else {
+            return
+        }
         let requestListNote = GetListNotesRequest(searchText: nil, sortByDate: nil)
-        
         let getListNoteWithAction = Observable.combineLatest(
             input.loadListNotes ,
             input.searchListNotes,
-            self.listNoteUseCase?.getListNotes(requestModel: requestListNote) ?? Observable.just([]))
+            listNoteUseCase.getListNotes(requestModel: requestListNote))
         
         getListNoteWithAction
-            .subscribe(onNext: { _, searchText , listNoteData in
-                output.listNotes.accept(listNoteData)
+            .subscribe(onNext: {[weak self]  _, searchText , listNoteData in
+                self?.output.listNotes.accept(listNoteData)
             })
             .disposed(by: disposeBag)
+    }
+    
+    func onReceiveNewNote(noteModel: NoteModel?) {
         
-        return output
+        guard let noteModel else {
+            return
+        }
+        
+        var listNoteNow = self.output.listNotes.value
+        listNoteNow?.insert(noteModel, at: 0)
+        self.output.listNotes.accept(listNoteNow)
     }
     
 }

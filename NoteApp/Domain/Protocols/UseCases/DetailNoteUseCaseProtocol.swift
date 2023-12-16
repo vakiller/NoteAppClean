@@ -10,5 +10,6 @@ import RxSwift
 
 public protocol DetailNoteUseCaseProtocol {
     func getDetailNote(request: GetNoteRequest) -> Observable<NoteModel>
-    func editNote(request: GetNoteRequest, note: NoteModel) -> Observable<Bool>
+    func editNote(request: GetNoteRequest, note: NoteModel) -> Completable
+    func createNote(request: NoteModel) -> Observable<NoteModel>
 }

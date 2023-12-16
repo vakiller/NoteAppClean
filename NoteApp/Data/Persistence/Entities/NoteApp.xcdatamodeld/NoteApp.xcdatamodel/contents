@@ -8,8 +8,10 @@
     </entity>
     <entity name="NoteEntity" representedClassName="NoteEntity" syncable="YES" codeGenerationType="class">
         <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="createAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="checkList" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="CheckItemEntity" inverseName="note" inverseEntity="CheckItemEntity"/>
     </entity>
 </model>
