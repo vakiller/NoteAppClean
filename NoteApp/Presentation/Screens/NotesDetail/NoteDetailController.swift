@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import RxSwift
 import RxRelay
+import Kingfisher
 
 class NoteDetailController: UIViewController {
     
@@ -16,6 +17,7 @@ class NoteDetailController: UIViewController {
     
     var updateNoteCompleted: PublishSubject<NoteModel?> = PublishSubject<NoteModel?>()
     
+    let urlBackgroundImage: String = "https://source.unsplash.com/random"
     // UI Properties
     
     lazy var noteDetailHeader: UIView = {
@@ -38,6 +40,7 @@ class NoteDetailController: UIViewController {
         textField.placeholder = "Note title here..."
         textField.borderStyle = .none
         textField.returnKeyType = .done
+        textField.backgroundColor = .clear
         return textField
     }()
     
@@ -56,6 +59,20 @@ class NoteDetailController: UIViewController {
         return icon
     }()
     
+    private lazy var imageBackground: UIImageView = {
+        let image = UIImageView()
+        let url = URL(string: urlBackgroundImage)
+        image.kf.setImage(with: url)
+        return image
+    }()
+    
+    private lazy var backgroundBlur: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.alpha = 0.8
+        return view
+    }()
+    
     lazy var noteInfoStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -71,8 +88,9 @@ class NoteDetailController: UIViewController {
     
     private lazy var noteTextView: UITextView = {
         let textView = UITextView()
-        
+        textView.textColor = .black
         textView.layer.borderWidth = 0
+        textView.backgroundColor = .clear
         textView.font = .systemFont(ofSize: 18)
         
         return textView
@@ -126,12 +144,30 @@ class NoteDetailController: UIViewController {
         
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        KingfisherManager.shared.cache.clearCache()
+    }
+    
     deinit {
         print("\(self) deinited")
     }
     
     func setupUi() {
         self.view.backgroundColor = .white
+        
+        self.view.addSubview(imageBackground)
+        
+        imageBackground.snp.makeConstraints { make in
+            make.leading.trailing.bottom.top.equalToSuperview()
+        }
+        
+        self.view.addSubview(backgroundBlur)
+        
+        backgroundBlur.snp.makeConstraints { make in
+            make.leading.trailing.bottom.top.equalToSuperview()
+        }
+        
         let buttonIconCircle = UIButton()
         buttonIconCircle.setImage(UIImage(systemName: "circle.circle.fill")?.withTintColor(.blue), for: .normal)
         
