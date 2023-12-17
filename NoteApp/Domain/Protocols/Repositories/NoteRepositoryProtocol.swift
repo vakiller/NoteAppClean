@@ -9,6 +9,7 @@ import Foundation
 import RxSwift
 
 public protocol NoteRepositoryProtocol {
+    func getListNotes() -> Observable<[NoteModel]>
     func getListNotes(requestListNote: GetListNotesRequest) -> Observable<[NoteModel]>
     func getDetailNote(requestNote: GetNoteRequest) -> Observable<NoteModel>
     func deleteNote(requestNote: GetNoteRequest) -> Completable

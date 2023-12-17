@@ -17,6 +17,10 @@ class NoteRepository: NoteRepositoryProtocol {
     }
     
     func getListNotes(requestListNote: GetListNotesRequest) -> Observable<[NoteModel]> {
+        return self.noteDataSource.getListNotes(request: requestListNote)
+    }
+    
+    func getListNotes() -> Observable<[NoteModel]> {
        return self.noteDataSource.getListNotes()
     }
     

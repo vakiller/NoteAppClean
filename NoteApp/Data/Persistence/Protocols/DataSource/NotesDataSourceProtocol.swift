@@ -11,6 +11,7 @@ import RxSwift
 
 public protocol NoteDataSourceProtocol {
     func getListNotes() -> Observable<[NoteModel]>
+    func getListNotes(request: GetListNotesRequest) -> Observable<[NoteModel]>
     func getNoteDetail(idNote: String) -> Observable<NoteModel>
     func createNote(noteModel: NoteModel) -> Completable
     func createNote(noteModel: NoteModel) -> Observable<NoteModel>

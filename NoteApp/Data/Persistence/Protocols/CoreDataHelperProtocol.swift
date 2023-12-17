@@ -11,7 +11,7 @@ import CoreData
 public protocol CoreDataHelperProtocol {
     func getContext() -> NSManagedObjectContext
     func getListData(entityName: String) throws -> [NSManagedObject]
-    func getListData(entityName: String, predicate: NSPredicate?, limit: Int?) throws -> [NSManagedObject]
+    func getListData(entityName: String, predicate: NSPredicate?, limit: Int?, sort: NSSortDescriptor?) throws -> [NSManagedObject]
     func deleteData(entity: NSManagedObject) throws
     func saveContext(entity: NSManagedObject) throws
     

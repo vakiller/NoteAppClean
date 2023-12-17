@@ -61,11 +61,14 @@ public class CoreDataHelper: CoreDataHelperProtocol {
         return entities
     }
     
-    public func getListData(entityName: String, predicate: NSPredicate?, limit: Int?) throws -> [NSManagedObject] {
+    public func getListData(entityName: String, predicate: NSPredicate?, limit: Int?, sort: NSSortDescriptor?) throws -> [NSManagedObject] {
         let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: entityName)
         fetchRequest.predicate = predicate
         if let limit {
             fetchRequest.fetchLimit = limit
+        }
+        if let sort {
+            fetchRequest.sortDescriptors = [sort]
         }
         let entities = try persistentContainer.viewContext.fetch(fetchRequest)
         return entities

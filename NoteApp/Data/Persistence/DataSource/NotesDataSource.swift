@@ -52,6 +52,49 @@ public class NoteDataSource: NoteDataSourceProtocol {
         }
     }
     
+    public func getListNotes(request: GetListNotesRequest) -> Observable<[NoteModel]> {
+        return Observable<[NoteModel]>.create { [weak self] observer in
+            
+            guard let self = self else {
+                return Disposables.create()
+            }
+            
+            do {
+                var compoundArray: [NSPredicate] = []
+                if let fromDate = request.fromDate?.timeIntervalSince1970 {
+                    let nsFromDate = NSDate(timeIntervalSince1970: fromDate)
+                    if request.sortByDate == .des {
+                        compoundArray.append(NSPredicate(format: "createAt < %@", nsFromDate))
+                    } else {
+                        compoundArray.append(NSPredicate(format: "createAt > %@", nsFromDate))
+                    }
+                    
+                }
+                
+                if let searchText = request.searchText, searchText.isEmpty == false {
+                    compoundArray.append(NSPredicate(format: "title CONTAINS[cd] %@",searchText))
+                }
+                
+                let compound = NSCompoundPredicate(andPredicateWithSubpredicates: compoundArray)
+                
+                let sort = NSSortDescriptor(key: "createAt", ascending: request.sortByDate == .asc ? true : false)
+                
+                if let listNotesEntity = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: compound, limit: request.limit, sort: sort) as? [NoteEntity] {
+                    let listNotesModel = listNotesEntity.compactMap({ self.mapToNoteModel(noteEntity: $0)})
+                    observer.onNext(listNotesModel)
+                    observer.onCompleted()
+                } else {
+                    observer.onError(CoreDataError.fetch)
+                }
+                
+                
+            } catch {
+                observer.onError(CoreDataError.fetch)
+            }
+            return Disposables.create()
+        }
+    }
+    
     public func getNoteDetail(idNote: String) -> RxSwift.Observable<NoteModel> {
         return Observable<NoteModel>.create { [weak self] observer in
             
@@ -61,7 +104,7 @@ public class NoteDataSource: NoteDataSourceProtocol {
             
             do {
                 let predicate = NSPredicate(format: "id = %@", idNote)
-                if let noteEntityData = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: predicate, limit: 1).first as? NoteEntity,
+                if let noteEntityData = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: predicate, limit: 1, sort: nil).first as? NoteEntity,
                 let noteData = mapToNoteModel(noteEntity: noteEntityData) {
                     observer.onNext(noteData)
                 } else {
@@ -119,7 +162,7 @@ public class NoteDataSource: NoteDataSourceProtocol {
                 try self.coreDataHelper.saveContext(entity: newNote)
                 
                 let predicate = NSPredicate(format: "id = %@", uuid)
-                if let noteEntityData = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: predicate, limit: 1).first as? NoteEntity,
+                if let noteEntityData = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: predicate, limit: 1, sort: nil).first as? NoteEntity,
                     let noteData = mapToNoteModel(noteEntity: noteEntityData) {
                     observer.onNext(noteData)
                 } else {

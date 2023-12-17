@@ -11,7 +11,7 @@ import RxRelay
 import RxSwiftExt
 
 protocol ListNotesViewModelInput {
-    var loadListNotes: PublishSubject<Void> { get set }
+    var sortByDate: BehaviorRelay<SortValue> { get set }
     var searchListNotes: BehaviorRelay<String?> { get set }
 }
 
@@ -20,30 +20,35 @@ class ListNotesViewModel: ViewModelType {
     var input: Input
     var output: Output
     
-    
     var disposeBag: DisposeBag
-    var listNoteUseCase: ListNoteUseCaseProtocol?
+
+    var searchListNotes: BehaviorRelay<String?> = BehaviorRelay<String?>(value: nil)
+    var sortByDate: BehaviorRelay<SortValue> = BehaviorRelay<SortValue>(value: .des)
+    var loadMore: PublishSubject<Void> = PublishSubject<Void>()
     
     struct Input: ListNotesViewModelInput {
-        var loadListNotes: PublishSubject<Void>
+        var sortByDate: BehaviorRelay<SortValue>
         var searchListNotes: BehaviorRelay<String?>
+        var loadMore: PublishSubject<Void>
     }
+    
+    var listNotes: RxRelay.BehaviorRelay<[NoteModel]?> = BehaviorRelay<[NoteModel]?>(value: [])
+    var isHasLoadMore: BehaviorRelay<Bool> = BehaviorRelay<Bool>(value: true)
     
     struct Output {
         var listNotes: RxRelay.BehaviorRelay<[NoteModel]?>
+        var isHasLoadMore: BehaviorRelay<Bool>
     }
     
-    var loadListNotes: PublishSubject<Void> = PublishSubject<Void>()
-    var searchListNotes: BehaviorRelay<String?> = BehaviorRelay<String?>(value: nil)
-    
-    var listNotes: RxRelay.BehaviorRelay<[NoteModel]?> = BehaviorRelay<[NoteModel]?>(value: [])
+    var listNoteUseCase: ListNoteUseCaseProtocol?
+    var getListNotesRequest = GetListNotesRequest(searchText: nil, sortByDate: .des, fromDate: nil, limit: 10)
     
     init(listNoteUseCase: ListNoteUseCaseProtocol) {
         self.listNoteUseCase = listNoteUseCase
         self.disposeBag = DisposeBag()
         
-        self.input = Input(loadListNotes: loadListNotes, searchListNotes: searchListNotes)
-        self.output = Output(listNotes: listNotes)
+        self.input = Input(sortByDate: sortByDate, searchListNotes: searchListNotes, loadMore: loadMore)
+        self.output = Output(listNotes: listNotes, isHasLoadMore: isHasLoadMore)
         
         self.getListNotes()
     }
@@ -53,17 +58,28 @@ class ListNotesViewModel: ViewModelType {
         guard let listNoteUseCase else {
             return
         }
-        let requestListNote = GetListNotesRequest(searchText: nil, sortByDate: nil)
-        let getListNoteWithAction = Observable.combineLatest(
-            input.loadListNotes ,
-            input.searchListNotes,
-            listNoteUseCase.getListNotes(requestModel: requestListNote))
+        let getListNoteWithFilters = Observable.combineLatest(
+            input.sortByDate,
+            input.searchListNotes.skip(1))
         
-        getListNoteWithAction
-            .subscribe(onNext: {[weak self]  _, searchText , listNoteData in
-                self?.output.listNotes.accept(listNoteData)
+        getListNoteWithFilters
+            .subscribe( onNext: { [weak self] sortByDate, searchText in
+                self?.output.isHasLoadMore.accept(true)
+                self?.getListNotesRequest.fromDate = nil
+                self?.getListNotesRequest.searchText = searchText
+                self?.getListNotesRequest.sortByDate = sortByDate
+                self?.startRequestGetListNotes()
             })
             .disposed(by: disposeBag)
+        
+        input.loadMore
+            .subscribe(onNext: { [weak self] in
+                self?.getListNotesRequest.fromDate = self?.output.listNotes.value?.last?.createAt
+                self?.startRequestGetListNotes()
+            })
+            .disposed(by: disposeBag)
+            
+            
     }
     
     func onReceiveNewNote(noteModel: NoteModel?) {
@@ -75,6 +91,25 @@ class ListNotesViewModel: ViewModelType {
         var listNoteNow = self.output.listNotes.value
         listNoteNow?.insert(noteModel, at: 0)
         self.output.listNotes.accept(listNoteNow)
+    }
+    
+    func startRequestGetListNotes() {
+        listNoteUseCase?.getListNotes(requestModel: getListNotesRequest)
+            .subscribe(onNext: {[weak self] listNoteFromCoreData in
+                
+                if listNoteFromCoreData.count < (self?.getListNotesRequest.limit ?? 0) {
+                    self?.output.isHasLoadMore.accept(false)
+                }
+                
+                if self?.getListNotesRequest.fromDate != nil {
+                    var listNotesNow: [NoteModel] = self?.output.listNotes.value ?? []
+                    listNotesNow.append(contentsOf: listNoteFromCoreData)
+                    self?.output.listNotes.accept(listNotesNow)
+                } else {
+                    self?.output.listNotes.accept(listNoteFromCoreData)
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
 }

@@ -122,7 +122,7 @@ final class NoteTableViewCell: UITableViewCell, ReuseableCell {
             return
         }
         
-        self.titleNote.text = noteModel.content
+        self.titleNote.text = noteModel.title
         self.dateTitle.text = noteModel.lastUpdate?.convertToString(formated: .ddMMyyyySpaceHyphenhhmma)
         
         let colorGenerated = String(noteModel.content?.prefix(10) ?? "").color()

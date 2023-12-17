@@ -27,8 +27,10 @@ public struct GetNoteRequest {
 }
 
 public struct GetListNotesRequest {
-    public let searchText: String?
-    public let sortByDate: SortValue?
+    public var searchText: String?
+    public var sortByDate: SortValue?
+    public var fromDate: Date?
+    public var limit: Int?
 }
 
 public enum SortValue: String {
