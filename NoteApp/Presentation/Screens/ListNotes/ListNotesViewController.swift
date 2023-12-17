@@ -88,7 +88,7 @@ class ListNotesViewController: UIViewController {
         let button = UIButton()
         var configuration = UIButton.Configuration.filled()
         configuration.contentInsets = .init(top: 10, leading: 20, bottom: 10, trailing: 20)
-        configuration.image = UIImage(systemName: "pencil.line")
+        configuration.image = UIImage(named: "add_note_icon")?.withTintColor(.white)
         configuration.baseBackgroundColor = .systemBlue
         configuration.background.cornerRadius = 32
         configuration.cornerStyle = .fixed

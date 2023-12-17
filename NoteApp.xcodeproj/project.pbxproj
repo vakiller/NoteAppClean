@@ -7,6 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9702072C2B2F6D0D0035630D /* ViewModelListNoteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9702072B2B2F6D0D0035630D /* ViewModelListNoteTests.swift */; };
+		9702072F2B2F6E1E0035630D /* ListNotesUseCaseMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9702072E2B2F6E1E0035630D /* ListNotesUseCaseMock.swift */; };
+		970207312B2F6EA70035630D /* MockNoteRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970207302B2F6EA70035630D /* MockNoteRepository.swift */; };
+		970207592B2F78050035630D /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 970207582B2F78050035630D /* RxCocoa */; };
+		9702075B2B2F78050035630D /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 9702075A2B2F78050035630D /* RxRelay */; };
+		9702075D2B2F78050035630D /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 9702075C2B2F78050035630D /* RxSwift */; };
+		9702075F2B2F78050035630D /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 9702075E2B2F78050035630D /* Swinject */; };
+		970207612B2F78050035630D /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 970207602B2F78050035630D /* Kingfisher */; };
+		970207632B2F781C0035630D /* RxSwiftExt in Frameworks */ = {isa = PBXBuildFile; productRef = 970207622B2F781C0035630D /* RxSwiftExt */; };
+		970207662B2F82A00035630D /* AddNoteMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 970207652B2F82A00035630D /* AddNoteMockData.swift */; };
 		9756AB712B28A5250077FB39 /* RxSwiftExt in Frameworks */ = {isa = PBXBuildFile; productRef = 9756AB702B28A5250077FB39 /* RxSwiftExt */; };
 		9756AB732B28A7B20077FB39 /* DiContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9756AB722B28A7B20077FB39 /* DiContainer.swift */; };
 		9756AB752B28A99A0077FB39 /* DiResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9756AB742B28A99A0077FB39 /* DiResolver.swift */; };
@@ -72,7 +82,24 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		970207372B2F70CD0035630D /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		9702072B2B2F6D0D0035630D /* ViewModelListNoteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelListNoteTests.swift; sourceTree = "<group>"; };
+		9702072E2B2F6E1E0035630D /* ListNotesUseCaseMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNotesUseCaseMock.swift; sourceTree = "<group>"; };
+		970207302B2F6EA70035630D /* MockNoteRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNoteRepository.swift; sourceTree = "<group>"; };
+		970207652B2F82A00035630D /* AddNoteMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNoteMockData.swift; sourceTree = "<group>"; };
 		9756AB722B28A7B20077FB39 /* DiContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiContainer.swift; sourceTree = "<group>"; };
 		9756AB742B28A99A0077FB39 /* DiResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiResolver.swift; sourceTree = "<group>"; };
 		9756AB782B28B3030077FB39 /* BaseLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseLabel.swift; sourceTree = "<group>"; };
@@ -137,6 +164,12 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				970207632B2F781C0035630D /* RxSwiftExt in Frameworks */,
+				9702075D2B2F78050035630D /* RxSwift in Frameworks */,
+				9702075B2B2F78050035630D /* RxRelay in Frameworks */,
+				970207592B2F78050035630D /* RxCocoa in Frameworks */,
+				9702075F2B2F78050035630D /* Swinject in Frameworks */,
+				970207612B2F78050035630D /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -150,6 +183,30 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9702072D2B2F6E0C0035630D /* ListNotes */ = {
+			isa = PBXGroup;
+			children = (
+				9702072B2B2F6D0D0035630D /* ViewModelListNoteTests.swift */,
+				9702072E2B2F6E1E0035630D /* ListNotesUseCaseMock.swift */,
+			);
+			path = ListNotes;
+			sourceTree = "<group>";
+		};
+		970207322B2F70CD0035630D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		970207642B2F82390035630D /* NoteDetail */ = {
+			isa = PBXGroup;
+			children = (
+				970207652B2F82A00035630D /* AddNoteMockData.swift */,
+			);
+			path = NoteDetail;
+			sourceTree = "<group>";
+		};
 		9756AB762B28B2000077FB39 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
@@ -184,6 +241,7 @@
 				97EFB6F82B2581B70042692E /* NoteAppTests */,
 				97EFB7022B2581B70042692E /* NoteAppUITests */,
 				97EFB6DD2B2581B50042692E /* Products */,
+				970207322B2F70CD0035630D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -214,7 +272,10 @@
 		97EFB6F82B2581B70042692E /* NoteAppTests */ = {
 			isa = PBXGroup;
 			children = (
+				970207642B2F82390035630D /* NoteDetail */,
+				9702072D2B2F6E0C0035630D /* ListNotes */,
 				97EFB6F92B2581B70042692E /* NoteAppTests.swift */,
+				970207302B2F6EA70035630D /* MockNoteRepository.swift */,
 			);
 			path = NoteAppTests;
 			sourceTree = "<group>";
@@ -467,6 +528,7 @@
 				97EFB6F12B2581B70042692E /* Sources */,
 				97EFB6F22B2581B70042692E /* Frameworks */,
 				97EFB6F32B2581B70042692E /* Resources */,
+				970207372B2F70CD0035630D /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -474,6 +536,14 @@
 				97EFB6F72B2581B70042692E /* PBXTargetDependency */,
 			);
 			name = NoteAppTests;
+			packageProductDependencies = (
+				970207582B2F78050035630D /* RxCocoa */,
+				9702075A2B2F78050035630D /* RxRelay */,
+				9702075C2B2F78050035630D /* RxSwift */,
+				9702075E2B2F78050035630D /* Swinject */,
+				970207602B2F78050035630D /* Kingfisher */,
+				970207622B2F781C0035630D /* RxSwiftExt */,
+			);
 			productName = NoteAppTests;
 			productReference = 97EFB6F52B2581B70042692E /* NoteAppTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -618,7 +688,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9702072F2B2F6E1E0035630D /* ListNotesUseCaseMock.swift in Sources */,
+				9702072C2B2F6D0D0035630D /* ViewModelListNoteTests.swift in Sources */,
 				97EFB6FA2B2581B70042692E /* NoteAppTests.swift in Sources */,
+				970207312B2F6EA70035630D /* MockNoteRepository.swift in Sources */,
+				970207662B2F82A00035630D /* AddNoteMockData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,6 +1055,36 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		970207582B2F78050035630D /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97EFB7122B2584C10042692E /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		9702075A2B2F78050035630D /* RxRelay */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97EFB7122B2584C10042692E /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxRelay;
+		};
+		9702075C2B2F78050035630D /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97EFB7122B2584C10042692E /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		9702075E2B2F78050035630D /* Swinject */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97EFB7192B25850E0042692E /* XCRemoteSwiftPackageReference "Swinject" */;
+			productName = Swinject;
+		};
+		970207602B2F78050035630D /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 97EFB71C2B2585570042692E /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+		970207622B2F781C0035630D /* RxSwiftExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9756AB6F2B28A5250077FB39 /* XCRemoteSwiftPackageReference "RxSwiftExt" */;
+			productName = RxSwiftExt;
+		};
 		9756AB702B28A5250077FB39 /* RxSwiftExt */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9756AB6F2B28A5250077FB39 /* XCRemoteSwiftPackageReference "RxSwiftExt" */;

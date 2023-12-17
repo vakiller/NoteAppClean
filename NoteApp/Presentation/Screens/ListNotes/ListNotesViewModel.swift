@@ -15,7 +15,7 @@ protocol ListNotesViewModelInput {
     var searchListNotes: BehaviorRelay<String?> { get set }
 }
 
-class ListNotesViewModel: ViewModelType {
+final class ListNotesViewModel: ViewModelType {
     
     var input: Input
     var output: Output
@@ -52,10 +52,10 @@ class ListNotesViewModel: ViewModelType {
         self.input = Input(sortByDate: sortByDate, searchListNotes: searchListNotes, loadMore: loadMore)
         self.output = Output(listNotes: listNotes, isHasLoadMore: isHasLoadMore, deleteNoteSuccess: deleteNoteSuccess)
         
-        self.getListNotes()
+        self.getListNotesActions()
     }
     
-    func getListNotes() {
+    func getListNotesActions() {
         
         guard listNoteUseCase != nil else {
             return
@@ -78,6 +78,25 @@ class ListNotesViewModel: ViewModelType {
             .subscribe(onNext: { [weak self] in
                 self?.getListNotesRequest.fromDate = self?.output.listNotes.value?.last?.createAt
                 self?.startRequestGetListNotes()
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func startRequestGetListNotes() {
+        listNoteUseCase?.getListNotes(requestModel: getListNotesRequest)
+            .subscribe(onNext: {[weak self] listNoteFromCoreData in
+                
+                if listNoteFromCoreData.count < (self?.getListNotesRequest.limit ?? 0) {
+                    self?.output.isHasLoadMore.accept(false)
+                }
+                
+                if self?.getListNotesRequest.fromDate != nil {
+                    var listNotesNow: [NoteModel] = self?.output.listNotes.value ?? []
+                    listNotesNow.append(contentsOf: listNoteFromCoreData)
+                    self?.output.listNotes.accept(listNotesNow)
+                } else {
+                    self?.output.listNotes.accept(listNoteFromCoreData)
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -138,25 +157,6 @@ class ListNotesViewModel: ViewModelType {
             })
             .disposed(by: disposeBag)
         
-    }
-    
-    func startRequestGetListNotes() {
-        listNoteUseCase?.getListNotes(requestModel: getListNotesRequest)
-            .subscribe(onNext: {[weak self] listNoteFromCoreData in
-                
-                if listNoteFromCoreData.count < (self?.getListNotesRequest.limit ?? 0) {
-                    self?.output.isHasLoadMore.accept(false)
-                }
-                
-                if self?.getListNotesRequest.fromDate != nil {
-                    var listNotesNow: [NoteModel] = self?.output.listNotes.value ?? []
-                    listNotesNow.append(contentsOf: listNoteFromCoreData)
-                    self?.output.listNotes.accept(listNotesNow)
-                } else {
-                    self?.output.listNotes.accept(listNoteFromCoreData)
-                }
-            })
-            .disposed(by: disposeBag)
     }
     
     private func checkNoteIsExist(noteId: String) -> Bool {

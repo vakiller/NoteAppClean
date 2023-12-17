@@ -13,7 +13,7 @@ protocol InputNoteDetailViewModel {
     var updateCurrentNote: PublishSubject<NoteModel?> { get set }
 }
 
-class NoteDetailViewModel: ViewModelType {
+final class NoteDetailViewModel: ViewModelType {
     var input: Input
     
     var output: Output

@@ -29,6 +29,7 @@ class NoteDetailController: UIViewController {
         let stackView = UIStackView()
         stackView.axis = .horizontal
         stackView.distribution = .fill
+        stackView.alignment = .center
         stackView.spacing = 16
         return stackView
     }()
@@ -106,7 +107,7 @@ class NoteDetailController: UIViewController {
         let button = UIButton()
         var configuration = UIButton.Configuration.filled()
         configuration.contentInsets = .init(top: 10, leading: 20, bottom: 10, trailing: 20)
-        configuration.image = UIImage(systemName: "checkmark")
+        configuration.image = UIImage(named: "save_note")?.withTintColor(.white)
         configuration.baseBackgroundColor = .systemBlue
         configuration.background.cornerRadius = 32
         configuration.cornerStyle = .fixed
@@ -169,15 +170,27 @@ class NoteDetailController: UIViewController {
         }
         
         let buttonIconCircle = UIButton()
-        buttonIconCircle.setImage(UIImage(systemName: "circle.circle.fill")?.withTintColor(.blue), for: .normal)
+        buttonIconCircle.setImage(UIImage(named: "icon_select"), for: .normal)
         
         let buttonPin = UIButton()
-        buttonPin.setImage(UIImage(systemName: "pin")?.withTintColor(.gray), for: .normal)
+        buttonPin.setImage(UIImage(named: "pin_icon"), for: .normal)
         buttonPin.tintColor = .black
         
         let buttonOption = UIButton()
-        buttonOption.setImage(UIImage(systemName: "ellipsis")?.withTintColor(.gray), for: .normal)
+        buttonOption.setImage(UIImage(named: "option_vertical"), for: .normal)
         buttonOption.tintColor = .black
+        
+        buttonIconCircle.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
+        }
+        
+        buttonPin.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
+        }
+        
+        buttonOption.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
+        }
         
         headerActions.addArrangedSubview(buttonIconCircle)
         headerActions.addArrangedSubview(buttonPin)
