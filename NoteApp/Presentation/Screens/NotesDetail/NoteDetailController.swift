@@ -35,6 +35,7 @@ class NoteDetailController: UIViewController {
         let textField = UITextField()
         textField.font = .boldSystemFont(ofSize: 20)
         textField.text = "Welcome to Notein"
+        textField.placeholder = "Note title here..."
         textField.borderStyle = .none
         textField.returnKeyType = .done
         return textField
@@ -44,6 +45,7 @@ class NoteDetailController: UIViewController {
         let editedLabel = BaseLabel()
         editedLabel.setStyle(style: .caption)
         editedLabel.textColor = .gray
+        editedLabel.text = "Adding new note"
         return editedLabel
     }()
     
@@ -120,6 +122,7 @@ class NoteDetailController: UIViewController {
             self?.noteTextView.resignFirstResponder()
         }).disposed(by: disposeBag)
         
+        self.viewModel.getNoteDetai()
         
     }
     
@@ -223,7 +226,7 @@ class NoteDetailController: UIViewController {
     }
     
     private func configData() {
-        self.editedLabel.text = "Edited: \(Date.now.convertToString(formated: .ddMMyyyyAthhmma) ?? "")"
+        
     }
     
 }
@@ -237,6 +240,7 @@ extension NoteDetailController: Bindable {
             .subscribe(onNext: { owner, noteData in
                 owner.titleTextField.text = noteData?.title
                 owner.noteTextView.text = noteData?.content
+                owner.editedLabel.text = "Edited: \(noteData?.lastUpdate?.convertToString(formated: .ddMMyyyyAthhmma) ?? "Adding new note")"
             })
             .disposed(by: self.viewModel.disposeBag)
 
@@ -247,7 +251,7 @@ extension NoteDetailController: Bindable {
 
         self.saveNoteButton.rx.tap.withLatestFrom(inputCombineData)
             .map({ [weak self] titleString, contentString in
-                self?.viewModel.addNewNote(title: titleString, content: contentString)
+                self?.viewModel.addOrUpdateNote(title: titleString, content: contentString)
             })
             .subscribe()
             .disposed(by: self.viewModel.disposeBag)

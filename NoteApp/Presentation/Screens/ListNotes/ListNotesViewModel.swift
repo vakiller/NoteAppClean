@@ -21,10 +21,11 @@ class ListNotesViewModel: ViewModelType {
     var output: Output
     
     var disposeBag: DisposeBag
-
+    
     var searchListNotes: BehaviorRelay<String?> = BehaviorRelay<String?>(value: nil)
     var sortByDate: BehaviorRelay<SortValue> = BehaviorRelay<SortValue>(value: .des)
     var loadMore: PublishSubject<Void> = PublishSubject<Void>()
+    var deleteNoteSuccess: PublishSubject<NoteModel> = PublishSubject<NoteModel>()
     
     struct Input: ListNotesViewModelInput {
         var sortByDate: BehaviorRelay<SortValue>
@@ -38,6 +39,7 @@ class ListNotesViewModel: ViewModelType {
     struct Output {
         var listNotes: RxRelay.BehaviorRelay<[NoteModel]?>
         var isHasLoadMore: BehaviorRelay<Bool>
+        var deleteNoteSuccess: PublishSubject<NoteModel>
     }
     
     var listNoteUseCase: ListNoteUseCaseProtocol?
@@ -48,14 +50,14 @@ class ListNotesViewModel: ViewModelType {
         self.disposeBag = DisposeBag()
         
         self.input = Input(sortByDate: sortByDate, searchListNotes: searchListNotes, loadMore: loadMore)
-        self.output = Output(listNotes: listNotes, isHasLoadMore: isHasLoadMore)
+        self.output = Output(listNotes: listNotes, isHasLoadMore: isHasLoadMore, deleteNoteSuccess: deleteNoteSuccess)
         
         self.getListNotes()
     }
     
     func getListNotes() {
         
-        guard let listNoteUseCase else {
+        guard listNoteUseCase != nil else {
             return
         }
         let getListNoteWithFilters = Observable.combineLatest(
@@ -78,8 +80,6 @@ class ListNotesViewModel: ViewModelType {
                 self?.startRequestGetListNotes()
             })
             .disposed(by: disposeBag)
-            
-            
     }
     
     func onReceiveNewNote(noteModel: NoteModel?) {
@@ -87,10 +87,57 @@ class ListNotesViewModel: ViewModelType {
         guard let noteModel else {
             return
         }
+        if checkNoteIsExist(noteId: noteModel.id ?? "") {
+            editNoteInListNote(noteModel: noteModel)
+        } else {
+            self.addNewNoteToListNote(noteModel: noteModel)
+        }
+    }
+    
+    private func addNewNoteToListNote(noteModel: NoteModel) {
+        var listNoteNow = self.output.listNotes.value
+        if getListNotesRequest.sortByDate == .des {
+            listNoteNow?.insert(noteModel, at: 0)
+        } else {
+            self.output.isHasLoadMore.accept(true)
+        }
+        self.output.listNotes.accept(listNoteNow)
+    }
+    
+    private func editNoteInListNote(noteModel: NoteModel?) {
+        
+        guard let noteModel else {
+            return
+        }
         
         var listNoteNow = self.output.listNotes.value
-        listNoteNow?.insert(noteModel, at: 0)
-        self.output.listNotes.accept(listNoteNow)
+        if let indexNoteInList = listNoteNow?.firstIndex(where: { $0.id == noteModel.id }) {
+            listNoteNow?[indexNoteInList] = noteModel
+            self.output.listNotes.accept(listNoteNow)
+        }
+    }
+    
+    func deleteNoteInListNote(noteModel: NoteModel?) {
+        guard let noteModel else {
+            return
+        }
+        
+        let noteRequest = GetNoteRequest(noteId: noteModel.id ?? "")
+        self.listNoteUseCase?.deleteListNotes(request: noteRequest)
+            .subscribe(onCompleted: { [weak self] in
+                
+                guard let self else {
+                    return
+                }
+                
+                var listNoteNow = self.output.listNotes.value
+                if let indexNoteInList = listNoteNow?.firstIndex(where: { $0.id == noteModel.id }) {
+                    listNoteNow?.remove(at: indexNoteInList)
+                    self.output.listNotes.accept(listNoteNow)
+                }
+            })
+            .disposed(by: disposeBag)
+        
     }
     
     func startRequestGetListNotes() {
@@ -110,6 +157,14 @@ class ListNotesViewModel: ViewModelType {
                 }
             })
             .disposed(by: disposeBag)
+    }
+    
+    private func checkNoteIsExist(noteId: String) -> Bool {
+        guard (self.output.listNotes.value?.firstIndex(where: { $0.id == noteId })) != nil else {
+            return false
+        }
+        
+        return true
     }
     
 }

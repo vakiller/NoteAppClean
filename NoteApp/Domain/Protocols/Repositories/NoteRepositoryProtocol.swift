@@ -14,6 +14,7 @@ public protocol NoteRepositoryProtocol {
     func getDetailNote(requestNote: GetNoteRequest) -> Observable<NoteModel>
     func deleteNote(requestNote: GetNoteRequest) -> Completable
     func editNote(requestNote: GetNoteRequest, note: NoteModel) -> Completable
+    func editNote(requestNote: GetNoteRequest, note: NoteModel) -> Observable<NoteModel>
     func createNote(noteModel: NoteModel) -> Completable
     func createNoteReturnValue(noteModel: NoteModel) -> Observable<NoteModel>
 }

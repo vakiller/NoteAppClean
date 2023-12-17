@@ -32,16 +32,17 @@ final class AppCoordinator: BaseCoordinator {
         rootViewController.setViewControllers([viewController], animated: false)
         viewController.goToNoteDetail
             .withUnretained(self)
-            .subscribe(onNext: { owner, _ in
-                owner.goToDetailNote()
+            .subscribe(onNext: { owner, noteModel in
+                owner.goToDetailNote(noteModel: noteModel)
             })
             .disposed(by: listNotesViewModel.disposeBag)
         self.window.rootViewController = rootViewController
         self.window.makeKeyAndVisible()
     }
     
-    private func goToDetailNote() {
+    private func goToDetailNote(noteModel: NoteModel? = nil) {
         let detailNoteCoordinator = NoteDetailCoordinator(rootViewController: self.rootViewController)
+        detailNoteCoordinator.noteDetailViewModel.noteId = noteModel?.id
         detailNoteCoordinator.start()
         self.addChildCoordinator(detailNoteCoordinator)
         detailNoteCoordinator.delegate = self

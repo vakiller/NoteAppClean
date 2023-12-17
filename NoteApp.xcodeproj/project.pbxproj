@@ -23,7 +23,6 @@
 		9756AB8F2B2B07290077FB39 /* DetailNoteUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9756AB8E2B2B07290077FB39 /* DetailNoteUseCase.swift */; };
 		978B72132B276EE60092287E /* BaseCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978B72122B276EE60092287E /* BaseCoordinator.swift */; };
 		978B72152B27757F0092287E /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978B72142B27757F0092287E /* AppCoordinator.swift */; };
-		978B72172B277A960092287E /* ListNotesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978B72162B277A960092287E /* ListNotesCoordinator.swift */; };
 		978B72192B277AA30092287E /* ListNotesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978B72182B277AA30092287E /* ListNotesViewController.swift */; };
 		978B721B2B277AAD0092287E /* ListNotesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978B721A2B277AAD0092287E /* ListNotesViewModel.swift */; };
 		978B721D2B277B560092287E /* ViewModelType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 978B721C2B277B560092287E /* ViewModelType.swift */; };
@@ -88,7 +87,6 @@
 		9756AB8E2B2B07290077FB39 /* DetailNoteUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailNoteUseCase.swift; sourceTree = "<group>"; };
 		978B72122B276EE60092287E /* BaseCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCoordinator.swift; sourceTree = "<group>"; };
 		978B72142B27757F0092287E /* AppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
-		978B72162B277A960092287E /* ListNotesCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNotesCoordinator.swift; sourceTree = "<group>"; };
 		978B72182B277AA30092287E /* ListNotesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNotesViewController.swift; sourceTree = "<group>"; };
 		978B721A2B277AAD0092287E /* ListNotesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListNotesViewModel.swift; sourceTree = "<group>"; };
 		978B721C2B277B560092287E /* ViewModelType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModelType.swift; sourceTree = "<group>"; };
@@ -319,7 +317,6 @@
 			isa = PBXGroup;
 			children = (
 				9756AB762B28B2000077FB39 /* Cell */,
-				978B72162B277A960092287E /* ListNotesCoordinator.swift */,
 				978B72182B277AA30092287E /* ListNotesViewController.swift */,
 				978B721A2B277AAD0092287E /* ListNotesViewModel.swift */,
 			);
@@ -595,7 +592,6 @@
 				97EFB7362B258B790042692E /* CreateNoteUseCaseProtocol.swift in Sources */,
 				97E5D1FD2B286D5900B8B6FE /* Bindable.swift in Sources */,
 				97EFB7412B2590FC0042692E /* NoteRepository.swift in Sources */,
-				978B72172B277A960092287E /* ListNotesCoordinator.swift in Sources */,
 				9756AB8F2B2B07290077FB39 /* DetailNoteUseCase.swift in Sources */,
 				978B72152B27757F0092287E /* AppCoordinator.swift in Sources */,
 				9756AB7F2B28B95C0077FB39 /* UIView+Extensions.swift in Sources */,

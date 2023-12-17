@@ -55,6 +55,13 @@ class ListNotesViewController: UIViewController {
         return button
     }()
     
+    private lazy var buttonOption: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "option_vertical"), for: .normal)
+        button.tintColor = .black
+        return button
+    }()
+    
     private lazy var searchBar: UISearchBar = {
         let view = UISearchBar()
         view.searchBarStyle = UISearchBar.Style.prominent
@@ -128,12 +135,17 @@ class ListNotesViewController: UIViewController {
         
         self.actionHeaderStackView.addArrangedSubview(iconApp)
         self.actionHeaderStackView.addArrangedSubview(buttonSortByDate)
+        self.actionHeaderStackView.addArrangedSubview(buttonOption)
         
         iconApp.snp.makeConstraints { make in
             make.width.height.equalTo(32)
         }
         
         buttonSortByDate.snp.makeConstraints { make in
+            make.width.height.equalTo(24)
+        }
+        
+        buttonOption.snp.makeConstraints { make in
             make.width.height.equalTo(24)
         }
         
@@ -244,10 +256,26 @@ extension ListNotesViewController: UITableViewDelegate, UITableViewDataSource {
         return 80
     }
     
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let contextItem = UIContextualAction(style: .destructive, title: "Delete Note") {  [weak self] (contextualAction, view, boolValue) in
+                guard let noteModel = self?.viewModel.listNotes.value?[indexPath.row] else {
+                    return
+                }
+                self?.viewModel.deleteNoteInListNote(noteModel: noteModel)
+            }
+            let swipeActions = UISwipeActionsConfiguration(actions: [contextItem])
+
+            return swipeActions
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: false)
         
-        print("SELECTED INDEX \(indexPath.row)")
+        guard let noteDetail = self.viewModel.listNotes.value?[indexPath.row] else {
+            return
+        }
+        
+        self.goToNoteDetail.onNext(noteDetail)
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {

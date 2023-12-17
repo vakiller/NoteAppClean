@@ -36,6 +36,10 @@ class NoteRepository: NoteRepositoryProtocol {
         return self.noteDataSource.createNote(noteModel: note)
     }
     
+    func editNote(requestNote: GetNoteRequest, note: NoteModel) -> Observable<NoteModel> {
+        return self.noteDataSource.updateNote(idNote: requestNote.noteId ?? "", noteModel: note)
+    }
+    
     func createNote(noteModel: NoteModel) -> Completable {
         return self.noteDataSource.createNote(noteModel: noteModel)
     }

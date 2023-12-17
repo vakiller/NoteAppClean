@@ -10,7 +10,6 @@ import RxSwift
 import RxRelay
 
 protocol InputNoteDetailViewModel {
-    var getCurrentNote: PublishSubject<Void> { get set }
     var updateCurrentNote: PublishSubject<NoteModel?> { get set }
 }
 
@@ -23,11 +22,9 @@ class NoteDetailViewModel: ViewModelType {
     var detailNoteUseCase: DetailNoteUseCaseProtocol?
     var noteId: String?
     
-    var getCurrentNote: PublishSubject<Void> = PublishSubject<Void>()
     var updateCurrentNote: PublishSubject<NoteModel?> = PublishSubject<NoteModel?>()
     
     struct Input: InputNoteDetailViewModel {
-        var getCurrentNote: PublishSubject<Void>
         var updateCurrentNote: PublishSubject<NoteModel?>
     }
     
@@ -41,11 +38,9 @@ class NoteDetailViewModel: ViewModelType {
     
     init(detailNoteUseCase: DetailNoteUseCaseProtocol) {
         self.detailNoteUseCase = detailNoteUseCase
-        self.input = Input(getCurrentNote: getCurrentNote, updateCurrentNote: updateCurrentNote)
+        self.input = Input(updateCurrentNote: updateCurrentNote)
         self.output = Output(noteDetail: noteDetail, updateNoteCompleted: updateNoteCompleted)
-        
-        self.getNoteDetai()
-        self.handleAddNewNote()
+        self.handleAddOrEditNote()
     }
     
     func getNoteDetai() {
@@ -54,42 +49,48 @@ class NoteDetailViewModel: ViewModelType {
             return
         }
         let requestGetNote = GetNoteRequest(noteId: noteId)
-        
-        let getNoteFromCoreData = Observable.combineLatest(input.getCurrentNote,detailNoteUseCase.getDetailNote(request: requestGetNote))
-        
-        getNoteFromCoreData
-        .subscribe(onNext: { [weak self] _, noteData in
+        detailNoteUseCase.getDetailNote(request: requestGetNote)
+        .subscribe(onNext: { [weak self] noteData in
             self?.output.noteDetail.accept(noteData)
         })
         .disposed(by: disposeBag)
         
     }
     
-    func addNewNote(title: String?, content: String?) {
-        let newNoteModel = noteModelGenerate(id: nil, createAt: nil, title: title, content: content)
+    func addOrUpdateNote(title: String?, content: String?) {
+        
+        let noteDetail = self.output.noteDetail.value
+        
+        let newNoteModel = noteModelGenerate(id: noteDetail?.id, createAt: noteDetail?.createAt, title: title, content: content)
         input.updateCurrentNote.onNext(newNoteModel)
     }
     
-    func handleAddNewNote() {
+    func handleAddOrEditNote() {
         
-        input.updateCurrentNote.subscribe(onNext: { [weak self] newNoteModel in
+        input.updateCurrentNote.subscribe(onNext: { [weak self] noteModel in
             
             guard let self = self else {
                 return
             }
             
-            guard let newNoteModel else {
+            guard let noteModel else {
                 return
             }
             
-            if newNoteModel.id == nil {
-                self.detailNoteUseCase?.createNote(request: newNoteModel).bind(to: self.output.updateNoteCompleted)
+            if noteModel.id == nil {
+                // create new
+                self.detailNoteUseCase?.createNote(request: noteModel).bind(to: self.output.updateNoteCompleted)
+                    .disposed(by: self.disposeBag)
+            } else {
+                // update
+                let requestGetNote = GetNoteRequest(noteId: noteModel.id)
+                self.detailNoteUseCase?.editNote(request: requestGetNote, note: noteModel).bind(to: self.output.updateNoteCompleted)
                     .disposed(by: self.disposeBag)
             }
         }).disposed(by: disposeBag)
     }
     
-    public func noteModelGenerate(id: String?, createAt: Date? ,  title: String?, content: String?) -> NoteModel {
+    public func noteModelGenerate(id: String?, createAt: Date?, title: String?, content: String?) -> NoteModel {
         return NoteModel(id: id,
                          createAt: createAt != nil ? createAt : Date.now,
                          lastUpdate: Date.now,

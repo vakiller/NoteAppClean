@@ -24,6 +24,10 @@ class DetailNoteUseCase: DetailNoteUseCaseProtocol {
         return self.noteRepository.editNote(requestNote: request, note: note)
     }
     
+    func editNote(request: GetNoteRequest, note: NoteModel) -> Observable<NoteModel> {
+        return self.noteRepository.editNote(requestNote: request, note: note)
+    }
+    
     func createNote(request: NoteModel) -> Observable<NoteModel> {
         return self.noteRepository.createNoteReturnValue(noteModel: request)
         

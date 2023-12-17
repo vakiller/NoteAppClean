@@ -179,7 +179,29 @@ public class NoteDataSource: NoteDataSourceProtocol {
     }
     
     public func updateNote(idNote: String, noteModel: NoteModel) -> RxSwift.Observable<NoteModel> {
-        return Observable<NoteModel>.create { observer in
+        return Observable<NoteModel>.create { [weak self] observer in
+            
+            guard let self = self else {
+                return Disposables.create()
+            }
+            
+            do {
+                let predicate = NSPredicate(format: "id = %@", idNote)
+                if let noteEntityData = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: predicate, limit: 1, sort: nil).first as? NoteEntity
+                     {
+                    noteEntityData.content = noteModel.content
+                    noteEntityData.title = noteModel.title
+                    noteEntityData.lastUpdate = noteModel.lastUpdate
+                    noteEntityData.checkList = NSOrderedSet(array: noteModel.checkList ?? [])
+                    try self.coreDataHelper.saveContext(entity: noteEntityData)
+                    observer.onNext(noteModel)
+                } else {
+                    observer.onError(CoreDataError.save)
+                }
+            } catch {
+                observer.onError(CoreDataError.save)
+            }
+            
             return Disposables.create()
         }
     }
@@ -194,9 +216,23 @@ public class NoteDataSource: NoteDataSourceProtocol {
     }
     
     public func deleteNote(idNote: String) -> Completable {
-        return Completable.create { completable in
+        return Completable.create { [weak self] completable in
+            guard let self = self else {
+                return Disposables.create()
+            }
             
-            
+            do {
+                let predicate = NSPredicate(format: "id = %@", idNote)
+                if let noteEntityData = try self.coreDataHelper.getListData(entityName: self.noteEntityName, predicate: predicate, limit: 1, sort: nil).first as? NoteEntity
+                {
+                    try self.coreDataHelper.deleteData(entity: noteEntityData)
+                    completable(.completed)
+                } else {
+                    completable(.error(CoreDataError.save))
+                }
+            } catch {
+                completable(.error(CoreDataError.save))
+            }
             
             return Disposables.create()
         }
