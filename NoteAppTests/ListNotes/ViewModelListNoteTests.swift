@@ -35,5 +35,10 @@ class ViewModelListNoteTests: XCTestCase {
         XCTAssertEqual(self.vm?.listNotes.value?.firstIndex(where: { $0.id == mockNoteRepository.listNotes.first?.id }), 0)
     }
     
+    func test_add_note_mock_data() {
+        let addNoteMockData = AddNoteMockData(detailNoteUseCase: DiResolver.shared.resolve(DetailNoteUseCaseProtocol.self))
+        addNoteMockData.addListNoteTest()
+    }
+    
     
 }
